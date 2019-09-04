@@ -1,0 +1,18 @@
+---
+title: "Just for fun"
+author: "chenhan"
+date: "9/3/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Git Notes
+
+## Command line in terminal
+
+## Github Desktop
+
+## RStudio and Git
