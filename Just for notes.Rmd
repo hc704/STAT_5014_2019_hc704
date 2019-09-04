@@ -9,9 +9,60 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Git Notes
+## Git and Github
+
+Some bacis concepts about version control. 
+pull
+
+add
+
+commit
+
+push: send changes from local repo to Github repo
+git push origin master
+
+fork
+
+clone
+
+init
+
+
+
+### Upload local repo to remote
+
+1. create the local repo (or already exist)
+2. create an empty remote repo
+3. push the local to remote
+
+
 
 ## Command line in terminal
+cd
+come to directory
+
+pwd
+print working directory
+
+open 
+open certain directory
+
+ls
+list all folders and files
+
+clear
+clear all things in the terminal
+
+.
+current directory path
+
+..
+main directory path
+
+tab
+automatically fill-out
+
+
 
 ## Github Desktop
 
