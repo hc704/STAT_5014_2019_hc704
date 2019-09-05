@@ -38,21 +38,104 @@ You will use this new R Markdown file to solve problems 3-5.
 
 In the lecture, there were two links to StackOverflow questions on why one should use version control.  In your own words, summarize in 2-3 sentences how you think version control can help you in the classroom.
 
-**Answer** 
+**Answer** To keep track every steps and possible branches of my project, so I can review the chronicle of the project and make it a clear and reproduciable research work.
 
 
 ## Problem 4
 
 In this exercise, you will import, munge, clean and summarize datasets from Wu and Hamada's _Experiments: Planning, Design and Analysis_ book you will use in the Spring.  For each one, please weave your code and text to describe both your process and observations.  Make sure you create a tidy dataset describing the variables, create a summary table of the data, note issues with the data.  
 
-a. Sensory data from five operators.    
+### a. Sensory data from five operators.    
 <http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat> 
-b. Gold Medal performance for Olympic Men's Long Jump, year is coded as 1900=0.  
+
+
+
+1. Overview the dataset from the url. The first 2 rows have different lengths with other rows.
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u1 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat"
+readLines(u1, n =40)
+```
+
+2. Import dataset and seperate item number from sensory data. Combine the complete item number column with sensory data.
+```{r, message=FALSE}
+d1 <- scan(u1, skip = 2)
+item.no <- seq(from = 1, to = 145, by = 16)
+d1 <- d1[-item.no]
+d1 <- matrix(d1, ncol = 5, byrow = T)
+item.col <- as.factor(rep(1:10, each = 3))
+d1 <- data.frame(item.col, d1)
+```
+
+3. Name the column (variables) and display. The table below gives 6 columns. The 1st column gives the item number which operators sense, and the last 5 columns give the sensory data on the item by each operator.
+```{r}
+colnames(d1) <- c("item", paste(rep("operate", times = 5), 1:5, sep=" "))
+knitr::kable(d1)
+```
+
+
+4. Summary statistics of each operator.
+```{r}
+knitr::kable(summary(d1[, 2:6]))
+```
+
+
+
+### b. Gold Medal performance for Olympic Men's Long Jump, year is coded as 1900=0.  
 <http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat>  
-c. Brain weight (g) and body weight (kg) for 62 species.    
-<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat>  
+
+
+1. Overview the dataset. The 1st row which is the variable name has two space between two names and the last 2 rows have difference length than other rows. These are issues needed to be addressed.
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u2 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat"
+readLines(u2)
+```
+
+2. Read variables names and data value seperately and then combine them. Sort the data by year.
+```{r, message=FALSE}
+d2.names <- readLines(u2, n=1)
+d2.names <- strsplit(d2.names, split = " ")[[1]]
+d2.names <- c(d2.names[1],paste(d2.names[2], d2.names[3]))
+
+d2 <- scan(u2, skip = 1, what = "double")
+d2 <- data.frame(matrix(as.numeric(d2), byrow = T, ncol = 2))
+colnames(d2) <- d2.names
+d2 <- d2[order(d2$Year),]
+```
+
+
+3. Display the data and summary statistics.
+```{r}
+knitr::kable(d2)
+knitr::kable(summary(d2)[,2])
+```
+
+
+### c. Brain weight (g) and body weight (kg) for 62 species.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat> 
+
+1. Overview of the dataset. 
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u3 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat"
+readLines(u3, n =10)
+```
+
+2. name, value
+```{r}
+
+```
+
+
+
+
 d. Triplicate measurements of tomato yield for two varieties of tomatos at three planting densities.  
 <http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat>  
+
+```{r}
+u4 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat"
+
+readLines(u4, n =5)
+```
+
 
 
 
