@@ -116,31 +116,74 @@ knitr::kable(summary(d2)[,2])
 1. Overview of the dataset. 
 ```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 u3 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat"
-readLines(u3, n =10)
+readLines(u3, n =3)
 ```
 
-2. name, value
+2. Input dataset. Seperate names and value from dataset and set them into right types.
 ```{r}
+d3 <- readLines(u3)
+d3.names <- d3[1]
+d3 <- d3[2:22]
 
+d3.names <- unique(strsplit(d3.names, split = " ")[[1]])
+d3.names <- c(paste(d3.names[1], d3.names[2]), paste(d3.names[3], d3.names[2]))
+
+d3 <- as.numeric(unlist(strsplit(d3, split = " ")))
+d3 <- matrix(d3, byrow = T, ncol = 2)
+colnames(d3) <- d3.names
+```
+
+
+3. Display the data and summry statistics
+```{r}
+knitr::kable(d3)
+knitr::kable(summary(d3))
 ```
 
 
 
-
-d. Triplicate measurements of tomato yield for two varieties of tomatos at three planting densities.  
+### d. Triplicate measurements of tomato yield for two varieties of tomatos at three planting densities.  
 <http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat>  
 
-```{r}
+1. Overview of the dataset. 
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 u4 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat"
-
 readLines(u4, n =5)
 ```
 
+2. Clean the data
+```{r}
+d4 <- readLines(u4)
+
+d4.density <- as.numeric(unlist(strsplit(d4[2],split = "\\s+")))[-1]
+d4.density <- rep(d4.density, times = 2, each = 3)
+
+d4.r3 <- unlist(strsplit(d4[3],split = "\\s+"))
+d4.r4 <- unlist(strsplit(d4[4],split = "\\s+"))
+
+d4.variety <- c(d4.r3[1], d4.r4[1])
+d4.variety <- rep(d4.variety, each = 9)
+
+d4.yield.r3 <- c()
+d4.yield.r4 <- c()
+for (i in 2:4){
+  d4.yield.r3 <- c(d4.yield.r3, unlist(strsplit(d4.r3[i],split = ",")))
+  d4.yield.r4 <- c(d4.yield.r4, unlist(strsplit(d4.r4[i],split = ",")))
+}
+
+d4.yield <- as.numeric(c(d4.yield.r3, d4.yield.r4))
+
+d4 <- data.frame(d4.variety, d4.density, d4.yield)
+colnames(d4) <- c("Variety", "Density", "Yield")
+
+```
 
 
-
-
-
+3. Display data and summary statistics
+```{r}
+knitr::kable(d4)
+knitr::kable(summary(d4))
+```
 
 
 ## Problem 5
@@ -150,6 +193,8 @@ In the swirl lessons, you played with a dataset "plants".  Our ultimate goal is 
 Note that if you didn't just do the swirl lesson, it is now not available.  Add the following code to your project to retrieve it.
 
 ```{r echo=T, eval=F}
+library(swirl)
+
 # Path to data
 .datapath <- file.path(path.package('swirl'), 'Courses',
                       'R_Programming_E', 'Looking_at_Data',
@@ -165,6 +210,13 @@ names(plants) <- c('Scientific_Name', 'Duration', 'Active_Growth_Period',
                    'Precip_Min', 'Precip_Max',
                    'Shade_Tolerance', 'Temp_Min_F')
 ```
+
+
+
+```{r}
+str(plants)
+```
+
 
 ## Problem 6
 
