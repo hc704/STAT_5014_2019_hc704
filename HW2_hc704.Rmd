@@ -100,13 +100,14 @@ d2 <- scan(u2, skip = 1, what = "double")
 d2 <- data.frame(matrix(as.numeric(d2), byrow = T, ncol = 2))
 colnames(d2) <- d2.names
 d2 <- d2[order(d2$Year),]
+d2$Year <- d2$Year + 1900
 ```
 
 
-3. Display the data and summary statistics.
+3. Display the data and summary statistics of long jump.
 ```{r}
 knitr::kable(d2)
-knitr::kable(summary(d2)[,2])
+knitr::kable(summary(d2)[,2], align = "l", caption = "Long Jump")
 ```
 
 
@@ -192,7 +193,7 @@ In the swirl lessons, you played with a dataset "plants".  Our ultimate goal is 
 
 Note that if you didn't just do the swirl lesson, it is now not available.  Add the following code to your project to retrieve it.
 
-```{r echo=T, eval=F}
+```{r echo=T, eval=T, message=F}
 library(swirl)
 
 # Path to data
@@ -220,34 +221,35 @@ plants <- plants[is.na(plants$Foliage_Color) == FALSE &
                    is.na(plants$pH_Dif) == FALSE,  ]
 ```
 
-2. Summary statistics of pH difference of different foliage color groups 
-```{r}
+2. Summary statistics of pH difference by different foliage color groups. Use a box plot to visulize the pH difference between different foliage color groups. From the statistics and plot, the green group shows a wide range that overlap with every other groups, and the gray-green group, red group and white-gray group shows a seemed difference of the mean of pH difference. While the data of different groups are very unbalanced so that difference between pH difference mean might not be conclusive.
+```{r, message=F}
 library(dplyr)
-group_by(plants, Foliage_Color) %>%
-  summarise(
-    count = n(),
-    mean = mean(pH_Dif, na.rm = TRUE),
-    sd = sd(pH_Dif, na.rm = TRUE)
-  )
-```
 
+knitr::kable(
+  group_by(plants, Foliage_Color) %>%
+    summarise(
+      count = n(),
+      mean = mean(pH_Dif, na.rm = TRUE),
+      sd = sd(pH_Dif, na.rm = TRUE))
+)
 
-```{r}
 library(ggplot2)
 plants %>% ggplot(aes(Foliage_Color, pH_Dif)) + 
         geom_boxplot() +
-        geom_jitter(width = 0.05)
+        geom_jitter(width = 0.07)
 ```
 
 
-3. Use linear model and ANOVA results to check the relationship between foliage color and ph Difference.
-```{r}
-lm(pH_Dif ~ Foliage_Color, plants)
+
+3. Use linear model and ANOVA results to check the relationship between foliage color and ph Difference. The ANOVA result shows that at least two groups has significant different mean pH difference, and the linear model results shows that the signifant different groups are gray-green and green if p-value 0.05 is used as criterion. 
+```{r, message=FALSE}
+require(broom) # for tidy()
+require(knitr) # for kable()
+lm.results <- tidy(lm(pH_Dif ~ Foliage_Color, plants))
+kable(lm.results)
+kable(tidy(aov(pH_Dif ~ Foliage_Color, plants)))
 ```
 
-```{r}
-summary(aov(pH_Dif ~ Foliage_Color, plants))
-```
 
 
 ## Problem 6
