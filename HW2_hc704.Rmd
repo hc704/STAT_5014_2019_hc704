@@ -212,9 +212,41 @@ names(plants) <- c('Scientific_Name', 'Duration', 'Active_Growth_Period',
 ```
 
 
+1. Define a variable ph difference to combine the information in pH_Min and pH_Max. Remove NAs row in foliage color and pH difference from the dataset.
+```{r}
+pH_Dif <- plants$pH_Max - plants$pH_Min
+plants <- data.frame(plants, pH_Dif)
+plants <- plants[is.na(plants$Foliage_Color) == FALSE & 
+                   is.na(plants$pH_Dif) == FALSE,  ]
+```
+
+2. Summary statistics of pH difference of different foliage color groups 
+```{r}
+library(dplyr)
+group_by(plants, Foliage_Color) %>%
+  summarise(
+    count = n(),
+    mean = mean(pH_Dif, na.rm = TRUE),
+    sd = sd(pH_Dif, na.rm = TRUE)
+  )
+```
+
 
 ```{r}
-str(plants)
+library(ggplot2)
+plants %>% ggplot(aes(Foliage_Color, pH_Dif)) + 
+        geom_boxplot() +
+        geom_jitter(width = 0.05)
+```
+
+
+3. Use linear model and ANOVA results to check the relationship between foliage color and ph Difference.
+```{r}
+lm(pH_Dif ~ Foliage_Color, plants)
+```
+
+```{r}
+summary(aov(pH_Dif ~ Foliage_Color, plants))
 ```
 
 

@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Git and Github
 
+### Git
 Some bacis concepts about version control. 
 pull
 
@@ -26,6 +27,9 @@ fork
 clone
 
 init
+
+
+### Github
 
 
 
