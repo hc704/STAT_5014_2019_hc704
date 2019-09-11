@@ -1,0 +1,271 @@
+---
+title: "Homework 2"
+subtitle: "Han Chen"
+date: '`r Sys.Date()`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For each assignment, turn in by the due date/time.  Late assignments must be arranged prior to submission.  In every case, assignments are to be typed neatly using proper English in Markdown.  
+
+This week, we spoke about Reproducible Research, R and version control, getting, cleaning and munging data and finally, summarizing data.  Again, we are focusing on Reproducible Analysis which, for us, is accomplished by mixing code, figures and text into a cohesive document that fully describes both the process we took to go from data to results and the rational behind our data driven conclusions.  This week we begin creating tidy data sets.  While others have proposed standards for sharing data with statiticians, as practicing data scientists, we realize the often onerous task of getting, cleaning and formatting data is usually in our hands.  From here on out, we will use GitHub to retrieve and turn in the homework assignments.  
+
+## Problem 1
+
+Work through the "R Programming E" lesson parts 4-7, 14 (optional 12 - only takes 5 min). 
+
+From the R command prompt:  
+
+```{r eval=FALSE, echo=TRUE}
+install.packages("swirl")  
+library(swirl)  
+install_course("R_Programming_E")  
+swirl()  
+```
+
+## Problem 2
+
+Create a new R Markdown file within your local GitHub repo folder (file-->new-->R Markdown-->save as).
+
+The filename should be: HW2_lastname, i.e. for me it would be HW2_Settlage
+
+You will use this new R Markdown file to solve problems 3-5.
+  
+## Problem 3
+
+In the lecture, there were two links to StackOverflow questions on why one should use version control.  In your own words, summarize in 2-3 sentences how you think version control can help you in the classroom.
+
+**Answer** To keep track every steps and possible branches of my project, so I can review the chronicle of the project and make it a clear and reproduciable research work.
+
+
+## Problem 4
+
+In this exercise, you will import, munge, clean and summarize datasets from Wu and Hamada's _Experiments: Planning, Design and Analysis_ book you will use in the Spring.  For each one, please weave your code and text to describe both your process and observations.  Make sure you create a tidy dataset describing the variables, create a summary table of the data, note issues with the data.  
+
+### a. Sensory data from five operators.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat> 
+
+
+
+1. Overview the dataset from the url. The first 2 rows have different lengths with other rows.
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u1 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat"
+readLines(u1, n =40)
+```
+
+2. Import dataset and seperate item number from sensory data. Combine the complete item number column with sensory data.
+```{r, message=FALSE}
+d1 <- scan(u1, skip = 2)
+item.no <- seq(from = 1, to = 145, by = 16)
+d1 <- d1[-item.no]
+d1 <- matrix(d1, ncol = 5, byrow = T)
+item.col <- as.factor(rep(1:10, each = 3))
+d1 <- data.frame(item.col, d1)
+```
+
+3. Name the column (variables) and display. The table below gives 6 columns. The 1st column gives the item number which operators sense, and the last 5 columns give the sensory data on the item by each operator.
+```{r}
+colnames(d1) <- c("item", paste(rep("operate", times = 5), 1:5, sep=" "))
+knitr::kable(d1)
+```
+
+
+4. Summary statistics of each operator.
+```{r}
+knitr::kable(summary(d1[, 2:6]))
+```
+
+
+
+### b. Gold Medal performance for Olympic Men's Long Jump, year is coded as 1900=0.  
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat>  
+
+
+1. Overview the dataset. The 1st row which is the variable name has two space between two names and the last 2 rows have difference length than other rows. These are issues needed to be addressed.
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u2 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat"
+readLines(u2)
+```
+
+2. Read variables names and data value seperately and then combine them. Sort the data by year.
+```{r, message=FALSE}
+d2.names <- readLines(u2, n=1)
+d2.names <- strsplit(d2.names, split = " ")[[1]]
+d2.names <- c(d2.names[1],paste(d2.names[2], d2.names[3]))
+
+d2 <- scan(u2, skip = 1, what = "double")
+d2 <- data.frame(matrix(as.numeric(d2), byrow = T, ncol = 2))
+colnames(d2) <- d2.names
+d2 <- d2[order(d2$Year),]
+d2$Year <- d2$Year + 1900
+```
+
+
+3. Display the data and summary statistics of long jump.
+```{r}
+knitr::kable(d2)
+knitr::kable(summary(d2)[,2], align = "l", caption = "Long Jump")
+```
+
+
+### c. Brain weight (g) and body weight (kg) for 62 species.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat> 
+
+1. Overview of the dataset. 
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u3 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat"
+readLines(u3, n =3)
+```
+
+2. Input dataset. Seperate names and value from dataset and set them into right types.
+```{r}
+d3 <- readLines(u3)
+d3.names <- d3[1]
+d3 <- d3[2:22]
+
+d3.names <- unique(strsplit(d3.names, split = " ")[[1]])
+d3.names <- c(paste(d3.names[1], d3.names[2]), paste(d3.names[3], d3.names[2]))
+
+d3 <- as.numeric(unlist(strsplit(d3, split = " ")))
+d3 <- matrix(d3, byrow = T, ncol = 2)
+colnames(d3) <- d3.names
+```
+
+
+3. Display the data and summry statistics
+```{r}
+knitr::kable(d3)
+knitr::kable(summary(d3))
+```
+
+
+
+### d. Triplicate measurements of tomato yield for two varieties of tomatos at three planting densities.  
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat>  
+
+1. Overview of the dataset. 
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+u4 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat"
+readLines(u4, n =5)
+```
+
+2. Clean the data
+```{r}
+d4 <- readLines(u4)
+
+d4.density <- as.numeric(unlist(strsplit(d4[2],split = "\\s+")))[-1]
+d4.density <- rep(d4.density, times = 2, each = 3)
+
+d4.r3 <- unlist(strsplit(d4[3],split = "\\s+"))
+d4.r4 <- unlist(strsplit(d4[4],split = "\\s+"))
+
+d4.variety <- c(d4.r3[1], d4.r4[1])
+d4.variety <- rep(d4.variety, each = 9)
+
+d4.yield.r3 <- c()
+d4.yield.r4 <- c()
+for (i in 2:4){
+  d4.yield.r3 <- c(d4.yield.r3, unlist(strsplit(d4.r3[i],split = ",")))
+  d4.yield.r4 <- c(d4.yield.r4, unlist(strsplit(d4.r4[i],split = ",")))
+}
+
+d4.yield <- as.numeric(c(d4.yield.r3, d4.yield.r4))
+
+d4 <- data.frame(d4.variety, d4.density, d4.yield)
+colnames(d4) <- c("Variety", "Density", "Yield")
+
+```
+
+
+3. Display data and summary statistics
+```{r}
+knitr::kable(d4)
+knitr::kable(summary(d4))
+```
+
+
+## Problem 5
+
+In the swirl lessons, you played with a dataset "plants".  Our ultimate goal is to see if there is a relationship between pH and Foliage_Color.  Consider a statistic that combines the information in pH_Min and pH_Max.  Clean, summarize and transform the data as appropriate.  Use function _lm_ to test for a relationship.  Report both the coefficients and ANOVA results in table form.
+
+Note that if you didn't just do the swirl lesson, it is now not available.  Add the following code to your project to retrieve it.
+
+```{r echo=T, eval=T, message=F}
+library(swirl)
+
+# Path to data
+.datapath <- file.path(path.package('swirl'), 'Courses',
+                      'R_Programming_E', 'Looking_at_Data',
+                      'plant-data.txt')
+# Read in data
+plants <- read.csv(.datapath, strip.white=TRUE, na.strings="")
+# Remove annoying columns
+.cols2rm <- c('Accepted.Symbol', 'Synonym.Symbol')
+plants <- plants[, !(names(plants) %in% .cols2rm)]
+# Make names pretty
+names(plants) <- c('Scientific_Name', 'Duration', 'Active_Growth_Period',
+                   'Foliage_Color', 'pH_Min', 'pH_Max',
+                   'Precip_Min', 'Precip_Max',
+                   'Shade_Tolerance', 'Temp_Min_F')
+```
+
+
+1. Define a variable ph difference to combine the information in pH_Min and pH_Max. Remove NAs row in foliage color and pH difference from the dataset.
+```{r}
+pH_Dif <- plants$pH_Max - plants$pH_Min
+plants <- data.frame(plants, pH_Dif)
+plants <- plants[is.na(plants$Foliage_Color) == FALSE & 
+                   is.na(plants$pH_Dif) == FALSE,  ]
+```
+
+2. Summary statistics of pH difference by different foliage color groups. Use a box plot to visulize the pH difference between different foliage color groups. From the statistics and plot, the green group shows a wide range that overlap with every other groups, and the gray-green group, red group and white-gray group shows a seemed difference of the mean of pH difference. While the data of different groups are very unbalanced so that difference between pH difference mean might not be conclusive.
+```{r, message=F}
+library(dplyr)
+
+knitr::kable(
+  group_by(plants, Foliage_Color) %>%
+    summarise(
+      count = n(),
+      mean = mean(pH_Dif, na.rm = TRUE),
+      sd = sd(pH_Dif, na.rm = TRUE))
+)
+
+library(ggplot2)
+plants %>% ggplot(aes(Foliage_Color, pH_Dif)) + 
+        geom_boxplot() +
+        geom_jitter(width = 0.07)
+```
+
+
+
+3. Use linear model and ANOVA results to check the relationship between foliage color and ph Difference. The ANOVA result shows that at least two groups has significant different mean pH difference, and the linear model results shows that the signifant different groups are gray-green and green if p-value 0.05 is used as criterion. 
+```{r, message=FALSE}
+require(broom) # for tidy()
+require(knitr) # for kable()
+lm.results <- tidy(lm(pH_Dif ~ Foliage_Color, plants))
+kable(lm.results)
+kable(tidy(aov(pH_Dif ~ Foliage_Color, plants)))
+```
+
+
+
+## Problem 6
+
+Finish this homework by pushing your changes to your repo.  In general, your workflow for this should be:  
+
+1. git pull -- to make sure you have the most recent repo  
+2. In R: do some work  
+3. git add -- this tells git to track new files  
+4. git commit -- make message INFORMATIVE and USEFUL  
+5. git push -- this pushes your local changes to the repo  
+
+If you have difficulty with steps 1-5, git is not correctly or completely setup.  See me for help.
+
+**Only submit the .Rmd and .pdf solution files.  Names should be formatted HW2_lastname.Rmd and HW2_lastname.pdf**
+
+## Optional preperation for next class:  
+
+TBD
