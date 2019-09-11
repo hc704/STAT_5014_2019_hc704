@@ -1,0 +1,65 @@
+---
+title: "Homework 3"
+subtitle: "Due Wednesday September 19, 2019"
+date: '`r Sys.Date()`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For each assignment, turn in by the due date/time.  Late assignments must be arranged prior to submission.  In every case, assignments are to be typed neatly using proper English in Markdown.  
+
+This week, we spoke about R and version control, munging and 'tidying' data, good programming practice and finally some basic programming building blocs.  To begin the homework, we will for the rest of the course, start by loading data and then creating tidy data sets.  
+
+## Problem 1
+
+Work through the "Getting and Cleaning Data" lesson parts 3 and 4.
+
+From the R command prompt:  
+```{r eval=FALSE}
+library(swirl)  
+swirl()  
+```
+
+## Problem 2
+
+Create a new R Markdown file within your local GitHub repo folder (file-->new-->R Markdown-->save as).
+
+The filename should be: HW3_lastname, i.e. for me it would be HW3_Settlage
+
+You will use this new R Markdown file to solve the following problems.
+
+  
+## Problem 3
+
+Redo Problem 4 parts a-d from last time using the tidyverse functions and piping.
+
+a. Sensory data from five operators.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat> 
+b. Gold Medal performance for Olympic Men's Long Jump, year is coded as 1900=0.  
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat>  
+c. Brain weight (g) and body weight (kg) for 62 species.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat>  
+d. Triplicate measurements of tomato yield for two varieties of tomatos at three planting densities.  
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat>  
+
+
+## Problem 4
+
+Finish this homework by pushing your changes to your repo.  In general, your workflow for this should be:  
+
+1. In terminal: git pull  -- to make sure you have the most recent local repo  
+2. In terminal: do some work  
+3. In terminal: git add -- check files you want to commit  
+4. In terminal: git commit -- make message INFORMATIVE and USEFUL  
+5. In terminal: git push -- this pushes your local changes to the repo  
+
+If you have difficulty with steps 1-5, git is not correctly or completely setup.
+
+**Only submit the .Rmd and .pdf solution files.  Names should be formatted HW3_lastname_firstname.Rmd and HW3_lastname_firstname.pdf**
+
+## Optional preperation for next class:  
+
+TBD -- could be something sent as a class message
