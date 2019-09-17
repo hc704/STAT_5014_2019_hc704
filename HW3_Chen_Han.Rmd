@@ -1,0 +1,230 @@
+---
+title: "Homework 3"
+subtitle: "Due Wednesday September 19, 2019"
+date: '`r Sys.Date()`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For each assignment, turn in by the due date/time.  Late assignments must be arranged prior to submission.  In every case, assignments are to be typed neatly using proper English in Markdown.  
+
+This week, we spoke about R and version control, munging and 'tidying' data, good programming practice and finally some basic programming building blocs.  To begin the homework, we will for the rest of the course, start by loading data and then creating tidy data sets.  
+
+## Problem 1
+
+Work through the "Getting and Cleaning Data" lesson parts 3 and 4.
+
+From the R command prompt:  
+```{r eval=FALSE}
+library(swirl)  
+swirl()  
+```
+
+## Problem 2
+
+Create a new R Markdown file within your local GitHub repo folder (file-->new-->R Markdown-->save as).
+
+The filename should be: HW3_lastname, i.e. for me it would be HW3_Settlage
+
+You will use this new R Markdown file to solve the following problems.
+
+  
+## Problem 3
+
+Redo Problem 4 parts a-d from last time using the tidyverse functions and piping.
+
+Load packages
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+
+### a. Sensory data from five operators.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat> 
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+## import and format dataset
+u1 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat"
+d1 <- scan(u1, skip = 2)[-seq(from = 1, to = 145, by = 16)] %>%
+        cbind(rep(1:10, each = 15), rep(1:5, times=30), .) %>%
+          `colnames<-`(c("item", "operate", "value")) %>%
+            tbl_df(.)
+
+## Display firt 5 rows
+knitr::kable(head(d1, n=5), 
+             caption = "First 5 rows")
+
+## summarize by item
+knitr::kable(
+  d1 %>% 
+  group_by(item) %>%
+    summarise(
+      mininum = min(value),
+      median = median(value),
+      mean = mean(value),
+      maximum = max(value),
+      "standard deviation" = sd(value)       
+      ),
+  caption = "Summary Statistics of Sensory Value by Item"
+)
+
+## summarize by operate
+knitr::kable(
+  d1 %>% 
+  group_by(operate) %>%
+    summarise(
+      mininum = min(value),
+      median = median(value),
+      mean = mean(value),
+      maximum = max(value),
+      "standard deviation" = sd(value)
+      ),
+  caption = "Summary Statistics of Sensory Value by Operate"
+)
+```
+
+
+
+
+
+
+### b. Gold Medal performance for Olympic Men's Long Jump, year is coded as 1900=0.  
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat>  
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+## import and format dataset 
+u2 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/LongJumpData.dat"
+
+d2.names <- readLines(u2, n=1) %>%
+              strsplit(., split = " ") %>%
+                unlist(.)
+d2.names <- c(d2.names[1],paste(d2.names[2], d2.names[3]))
+
+d2 <- scan(u2, skip = 1) %>%
+        as.numeric(.) %>% 
+          matrix(., byrow = T, ncol = 2) %>%
+            'colnames<-'(d2.names) %>%
+              tbl_df(.) %>%
+                mutate(., Year = Year + 1900) %>%
+                  arrange(., Year)
+
+## first 5 rows of dataset
+knitr::kable(head(d2, n=5), 
+             caption = "First 5 rows")
+## Summary
+knitr::kable(summary(d2[,2]), align = "l")
+```
+
+
+
+
+### c. Brain weight (g) and body weight (kg) for 62 species.    
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat> 
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+## 1. Overview of the dataset.
+u3 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/BrainandBodyWeight.dat"
+
+d3.names <- readLines(u3)[1]  %>%
+              strsplit(., split = " ") %>%
+                unlist(.)  %>%
+                  unique(.)
+d3.names <- c(paste(d3.names[1], d3.names[2]), paste(d3.names[3], d3.names[2]))
+
+
+
+d3 <- readLines(u3)[2:22] %>%
+        strsplit(., split = " ") %>%
+          unlist(.) %>%
+            as.numeric(.) %>%
+              matrix(., byrow = T, ncol = 2) %>%
+                'colnames<-' (d3.names) 
+
+## 3. Display the data and summry statistics
+knitr::kable(head(d3,n=5), 
+             caption = "First 5 rows")
+knitr::kable(summary(d3))
+```
+
+
+
+
+### d. Triplicate measurements of tomato yield for two varieties of tomatos at three planting densities.  
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat>  
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+## 1. Overview of the dataset.
+u4 <- "http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/tomato.dat"
+
+## 2. Clean the data
+d4 <- readLines(u4)
+
+d4.r3 <- unlist(strsplit(d4[3],split = "\\s+"))
+d4.r4 <- unlist(strsplit(d4[4],split = "\\s+"))
+
+d4.variety <- c(d4.r3[1], d4.r4[1]) %>%
+                rep(., each = 9)
+
+d4.density <- as.numeric(unlist(strsplit(d4[2],split = "\\s+")))[-1] %>%
+                rep(., times = 2, each = 3)
+
+
+d4.yield <- as.numeric(unlist(strsplit(d4.r3[2:4],split = ",")), 
+                       unlist(strsplit(d4.r4[2:4],split = ",")))
+
+d4 <- data.frame(d4.variety, d4.density, d4.yield) %>%
+          tbl_df() %>%
+            'colnames<-' (c("Variety", "Density", "Yield"))
+
+##3. Display data and summary statistics
+knitr::kable(head(d4,n=5), 
+             caption = "First 5 rows")
+knitr::kable(
+  d4 %>% 
+      group_by(Variety) %>%
+        summarise(
+              mininum = min(Yield),
+              median = median(Yield),
+              mean = mean(Yield),
+              maximum = max(Yield),
+              "standard deviation" = sd(Yield)
+            ),
+  caption = "Summary Statistics of Yield by Variety"
+)
+
+knitr::kable(
+  d4 %>% 
+      group_by(Density) %>%
+        summarise(
+              mininum = min(Yield),
+              median = median(Yield),
+              mean = mean(Yield),
+              maximum = max(Yield),
+              "standard deviation" = sd(Yield)
+            ),
+  caption = "Summary Statistics of Yield by Density"
+)
+```
+
+
+## Problem 4
+
+Finish this homework by pushing your changes to your repo.  In general, your workflow for this should be:  
+
+1. In terminal: git pull  -- to make sure you have the most recent local repo  
+2. In terminal: do some work  
+3. In terminal: git add -- check files you want to commit  
+4. In terminal: git commit -- make message INFORMATIVE and USEFUL  
+5. In terminal: git push -- this pushes your local changes to the repo  
+
+If you have difficulty with steps 1-5, git is not correctly or completely setup.
+
+**Only submit the .Rmd and .pdf solution files.  Names should be formatted HW3_lastname_firstname.Rmd and HW3_lastname_firstname.pdf**
+
+## Optional preperation for next class:  
+
+TBD -- could be something sent as a class message

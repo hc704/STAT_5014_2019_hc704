@@ -1,0 +1,74 @@
+---
+title: "Lecture 3 in-class creating tidy datasets"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
+---
+
+# Quick review
+
+# summary functions
+1. what does the imported data look like?  Missing values, odd structures?
+2. What summaries, text or plots, might you make on the girder data as imported assuming 9 different girders? 
+
+# dplyr
+1. Using dplyr functions, can you summarize the data? Mean by method, mean by girder?  Min? Max?
+```{r}
+library(dplyr)
+library(tidyr)
+## pipe: pass the output into another function
+iris %>% 
+    group_by(Species) %>%
+    summarize(avg=mean(Sepal.Width)) 
+```
+
+# homework from last time
+
+Sensory data from five operators.   
+<http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat> 
+```{r}
+# look at first few lines
+# what strategy should we use
+# 
+```
+
+
+```{r Example2_Sensory_analysis, echo=F, eval=T, tidy=F, tidy.opts=list(width.cutoff=55)}
+    ########################### 
+    #Sensory analysis  
+    #get data  
+    ########################### 
+    url<-"http://www2.isye.gatech.edu/~jeffwu/wuhamadabook/data/Sensory.dat"
+    Sensory_raw<-read.table(url, header=F, skip=1, fill=T, stringsAsFactors = F)
+    saveRDS(Sensory_raw,file = "Sensory_raw.RDS")
+    Sensory_raw<-readRDS(file = "Sensory_raw.RDS")
+    Sensory_tidy<-Sensory_raw[-1,]
+    Sensory_tidy_a<-filter(.data = Sensory_tidy,V1 %in% 1:10) %>%
+                    rename(Item=V1,V1=V2,V2=V3,V3=V4,V4=V5,V5=V6)
+    Sensory_tidy_b<-filter(.data = Sensory_tidy,!(V1 %in% 1:10)) %>%
+                    mutate(Item=rep(as.character(1:10),each=2)) %>%
+                    mutate(V1=as.numeric(V1)) %>%
+                    select(c(Item,V1:V5))
+    Sensory_tidy<-bind_rows(Sensory_tidy_a,Sensory_tidy_b)
+    colnames(Sensory_tidy)<-c("Item",paste("Person",1:5,sep="_"))
+    Sensory_tidy<-Sensory_tidy %>%  
+        gather(Person,value,Person_1:Person_5) %>%  
+        mutate(Person = gsub("Person_","",Person)) %>%
+        arrange(Item)
+    
+    ########################### 
+    
+```
+
+
+```{r}
+Sensory_tidy
+```
+
+
+
+## homwork 3
