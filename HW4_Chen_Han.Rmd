@@ -1,0 +1,111 @@
+---
+title: "Homework 4"
+subtitle: "Due Wednesday 9am September 25, 2019"
+date: '`r Sys.Date()`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For each assignment, turn in by the due date/time.  Late assignments must be arranged prior to submission.  In every case, assignments are to be typed neatly using proper English in Markdown.  
+
+This week, we spoke about R and version control, munging and 'tidying' data, good programming practice and finally some basic programming building blocs.  To begin the homework, we will for the rest of the course, start by loading data and then creating tidy data sets.  
+
+## Problem 1
+
+Work through the "R Programming E" lesson parts 8 and 9.
+
+From the R command prompt:  
+```{r eval=FALSE}
+library(swirl)  
+swirl()  
+```
+
+## Problem 2
+
+Create a new R Markdown file (file-->new-->R Markdown-->save as.
+
+The filename should be: HW4_lastname_firstname, i.e. for me it would be HW4_Settlage_Bob
+
+You will use this new R Markdown file to solve problems 4-10.
+  
+## Problem 4
+
+In the lecture, there were two links to programming style guides.  What is your takeaway from this and what specifically are _you_ going to do to improve your coding style?  
+
+**Answer**
+Enssentially, there are at least two things for me to improve: 
+1. Name variables and functions: Use noun to name variable and verb to name function. Use lowercase. Use "_" to seperate words in a name. Be concise.
+2. Indent: New line after curly braces, and closing curly brace in its own line. Use two space to indent code.
+
+
+## Problem 5
+
+Good programming practices start with this homework.  In the last homework, you imported, munged, cleaned and summarized datasets from Wu and Hamada's _Experiments: Planning, Design and Analysis_.  In this problem, please using _lintr_ to lint your last homework (if you didn't do it, perhaps the time is now ;) ).  In my case, the command looks like this (takes a few moments to run):  
+
+```{r eval=F, echo=T}
+    lint(filename = "./02_data_munging_summarizing_R_git/HW3_Settlage_Bob.Rmd")
+```
+
+Can you clean up your code to pass the major issues??  <--- just a challenge, not part of the problem!! 
+
+Note that really all we have done is syntax checking and received a few stylistic suggestions.  We COULD create a custom linter to check for indenting, etc.  For now, I think it is enough to know there are a lot of opinions on what code should look like and working in teams requires you to code nicely!!  So, clean up your code!!
+
+From the messages, what are some things you need to change in your code?
+
+## Problem 6
+
+A situation you may encounter is a data set where you need to create a summary statistic for each observation type.  Sometimes, this type of redundancy is perfect for a function.  Here, we need to create a single function to:
+
+1. calculate the mean for dev1
+2. calculate the mean for dev2
+3. calculate the sd for dev1
+4. calculate the sd for dev2
+5. calculate the correlation between dev1 and dev2
+6. return the above as a single data.frame
+
+We will use this function to summarize a dataset which has multiple repeated measurements from two devices by thirteen Observers.  In the current lecture directory, you will see a file "HW4_data.rds".  Please load the file (?readRDS -- really nice format for storing data objects), loop through the Observers collecting the summary statistics via your function for each Observer separately.
+
+The output of this problem should be:
+
+a. A single table of the means, sd, and correlation for each of the 13 Observers  
+b. A box plot of all the means to compare the spread of means from dev1 to dev2  
+c. A violin plot of all the sd to compare the spread of sd from dev1 to dev2  
+ 
+I will look at the code and comment on it, so make it NICE!!
+
+## Problem 7 
+
+Some numerical methods are perfect candidates for funtions.  Create a function that uses Reimann sums to approximate the integral:
+
+
+\begin{equation*}
+f(x) = \int_0^1 e^{-\frac{x^2}{2}}
+\end{equation*}
+
+The function should include as an argument the width of the slices used.  Now use a looping construct (for or while) to loop through possible slice widths.  Report the various slice widths used, the sum calculated, and the slice width necessary to obtain an answer within $1e^{-6}$ of the analytical solution.
+
+Note: use good programming practices.
+
+## Problem 8
+
+Create a function to find solutions to (1) using Newton's method.  The answer should include the solutions with tolerance used to terminate the loop, the interval used, and a plot showing the iterations on the path to the solution.
+
+\begin{equation}
+f(x) = 3^x - sin(x) + cos(5x)
+\end{equation}
+
+## Problem 9
+
+Finish this homework by pushing your changes to your repo.
+
+**Only submit the .Rmd and .pdf solution files.  Names should be formatted HW4_lastname_firstname.Rmd and HW4_lastname_firstname.pdf**
+
+## Optional preperation for next class:  
+
+Next week we will talk about Exploratory Data Analysis and graphing.  Swirl will be a bit part of this.  Check out "Exploratory_Data_Analysis" Swirl lessons 1-10.
+
+
+
