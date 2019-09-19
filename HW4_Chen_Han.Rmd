@@ -46,7 +46,8 @@ Enssentially, there are at least two things for me to improve:
 Good programming practices start with this homework.  In the last homework, you imported, munged, cleaned and summarized datasets from Wu and Hamada's _Experiments: Planning, Design and Analysis_.  In this problem, please using _lintr_ to lint your last homework (if you didn't do it, perhaps the time is now ;) ).  In my case, the command looks like this (takes a few moments to run):  
 
 ```{r eval=F, echo=T}
-    lint(filename = "./02_data_munging_summarizing_R_git/HW3_Settlage_Bob.Rmd")
+library(lintr)    
+lint(filename = "./HW3_Chen_Han.Rmd")
 ```
 
 Can you clean up your code to pass the major issues??  <--- just a challenge, not part of the problem!! 
@@ -54,6 +55,14 @@ Can you clean up your code to pass the major issues??  <--- just a challenge, no
 Note that really all we have done is syntax checking and received a few stylistic suggestions.  We COULD create a custom linter to check for indenting, etc.  For now, I think it is enough to know there are a lot of opinions on what code should look like and working in teams requires you to code nicely!!  So, clean up your code!!
 
 From the messages, what are some things you need to change in your code?
+
+**Answer**
+
+1. Superfluous: a lot of space left unintentionally.
+2. Infix space: space before or after infix like "="
+3. Double quote: use double quote rather than single quote
+
+
 
 ## Problem 6
 
@@ -76,18 +85,83 @@ c. A violin plot of all the sd to compare the spread of sd from dev1 to dev2
  
 I will look at the code and comment on it, so make it NICE!!
 
+
+**Answer**
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+df <- readRDS("HW4_data.rds") 
+df$Observer <- as.factor(df$Observer)
+
+head(df, n = 5)
+
+df_stat <-    
+    df %>%
+    group_by(Observer) %>%
+    summarize(
+     mean1 = mean(dev1),
+     mean2 = mean(dev2),
+     "standard deviation 1" = sd(dev1),
+     "standard deviation 2" = sd(dev2),
+     correlation = cor(dev1, dev2)
+    )
+
+df_stat
+boxplot(df_stat$mean1, df_stat$mean2)
+```
+
+```{r}
+df_vio <- data.frame("standard deviation" = c(df_stat$`standard deviation 1`, df_stat$`standard deviation 2`), 
+                     "device no." = as.factor(c(rep(1, 13), rep(2, 13))))
+df_vio
+ggplot(df_vio, aes(x = "device no.", y = "standard deviation" )) + 
+  geom_violin()
+```
+
+
+
 ## Problem 7 
 
 Some numerical methods are perfect candidates for funtions.  Create a function that uses Reimann sums to approximate the integral:
 
 
 \begin{equation*}
-f(x) = \int_0^1 e^{-\frac{x^2}{2}}
+f(x) = \int_0^1 e^{-\frac{x^2}{2}} dx
 \end{equation*}
 
 The function should include as an argument the width of the slices used.  Now use a looping construct (for or while) to loop through possible slice widths.  Report the various slice widths used, the sum calculated, and the slice width necessary to obtain an answer within $1e^{-6}$ of the analytical solution.
 
 Note: use good programming practices.
+
+**Answer**
+
+As we can see from the approximation results table below, when the slice width is less or equal than $1e^{-6}$, the error is within within $1e^{-6}$ of the analytical solution.
+```{r}
+reimann_sum <- function(width = 0.01){
+  x <- seq(from = 0, to = 1, by = width)
+  sum(exp(- x^2 / 2) * width)
+}
+
+# analytical solution using standard normal distribution
+exact_value <- sqrt(2 * pi) * (pnorm(1) - pnorm(0))
+
+# approximation
+approx_results <- matrix(
+                    nrow = 7, ncol = 3,
+                    dimnames = list(c(), c("Slice Width", "Summation", "Error"))
+                    )
+
+for (i in 1:7){
+  approx_results[i, 1] <- 10^(-i)
+  approx_results[i, 2] <- reimann_sum(approx_results[i, 1])
+  approx_results[i, 3] <- exact_value - approx_results[i, 2]
+}
+
+knitr::kable(approx_results)
+```
+
+
+
 
 ## Problem 8
 
@@ -96,6 +170,52 @@ Create a function to find solutions to (1) using Newton's method.  The answer sh
 \begin{equation}
 f(x) = 3^x - sin(x) + cos(5x)
 \end{equation}
+
+**Answer**
+```{r, out.width = "95%"}
+equation <- function(x){
+  3^x - sin(x) + cos(5*x)
+}
+
+derivative <- function(x){
+  3^x * log(3) - cos(x) - 5 * sin(5*x)
+}
+
+newton_method <- function(tolerance = 0.0001, start_point = -2.5){
+
+  it_x <- c(start_point)
+  error <- c(equation(it_x))
+  i <- 1
+  
+  curve(equation, from = -6, to = -2)
+  abline(h = 0, col = "green")
+  
+  while(abs(error[i]) > tolerance){
+    segments(x0 = it_x[i], y0 = 0, 
+             x1 = it_x[i], y1 = equation(it_x[i]), 
+             col = "blue", lty = 3)
+    
+    curve(derivative(it_x[i]) * (x - it_x[i]) + equation(it_x[i]), 
+          add = TRUE, col = "red", lty = 2)
+    
+    i = i + 1
+    
+    it_x <- c(it_x, it_x[i-1] - equation(it_x[i-1]) / derivative(it_x[i-1]))
+    
+    error <- c(error, equation(it_x[i]))
+  }
+  
+  print(paste("One of the solution to the equation is", it_x[i],
+              ". The tolerance to terminate the loop is", tolerance, 
+              "and the interval used is from", min(it_x), "to", max(it_x)))
+  knitr::kable(tbl_df(data.frame("x value" = it_x, error)))
+}
+
+newton_method()
+```
+
+
+
 
 ## Problem 9
 
