@@ -93,7 +93,8 @@ library(tidyverse)
 df <- readRDS("HW4_data.rds") 
 df$Observer <- as.factor(df$Observer)
 
-head(df, n = 5)
+knitr::kable(head(df, n = 5), 
+             caption = "")
 
 df_stat <-    
     df %>%
@@ -101,21 +102,48 @@ df_stat <-
     summarize(
      mean1 = mean(dev1),
      mean2 = mean(dev2),
-     "standard deviation 1" = sd(dev1),
-     "standard deviation 2" = sd(dev2),
+     sd1 = sd(dev1),
+     sd2 = sd(dev2),
      correlation = cor(dev1, dev2)
     )
 
-df_stat
-boxplot(df_stat$mean1, df_stat$mean2)
+knitr::kable(df_stat,
+             caption = "Summary Statistics by Observer")
+
+data.frame(mean = c(df_stat$mean1, df_stat$mean2), 
+           device = as.factor(c(rep(1, 13), rep(2,13)))) %>%
+boxplot(mean ~ device, .,
+        xlab = "device",
+        ylab = "mean",
+        main = "Boxplot of Means by Device")
+
+boxplot(df_stat$mean1, 
+        xlab = "device 1",
+        ylab = "mean",
+        main = "Boxplot of Means of Device 1")
+
+boxplot(df_stat$mean2,
+        xlab = "device 2",
+        ylab = "mean",
+        main = "Boxplot of Means of Device 2")
+
+data.frame(sd = c(df_stat$sd1, df_stat$sd2),
+           device = as.factor(c(rep(1, 13), rep(2, 13)))) %>%
+ggplot(., aes(device, sd)) +
+  geom_violin() + 
+  ylab("standard deviation") +
+  ggtitle("Violin Plot of Standard Deviation by Device") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
+
+
+
+### Interesting Scatterplot
 ```{r}
-df_vio <- data.frame("standard deviation" = c(df_stat$`standard deviation 1`, df_stat$`standard deviation 2`), 
-                     "device no." = as.factor(c(rep(1, 13), rep(2, 13))))
-df_vio
-ggplot(df_vio, aes(x = "device no.", y = "standard deviation" )) + 
-  geom_violin()
+ggplot(data = df, aes(x = dev1, y = dev2)) +
+  geom_point() +
+  facet_wrap(vars(Observer))
 ```
 
 
@@ -181,7 +209,7 @@ derivative <- function(x){
   3^x * log(3) - cos(x) - 5 * sin(5*x)
 }
 
-newton_method <- function(tolerance = 0.0001, start_point = -2.5){
+newton_method <- function(tolerance = 0.0001, start_point = -2.6){
 
   it_x <- c(start_point)
   error <- c(equation(it_x))
