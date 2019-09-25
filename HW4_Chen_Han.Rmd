@@ -233,9 +233,13 @@ newton_method <- function(tolerance = 0.0001, start_point = -2.6){
     error <- c(error, equation(it_x[i]))
   }
   
-  print(paste("One of the solution to the equation is", it_x[i],
-              ". The tolerance to terminate the loop is", tolerance, 
-              "and the interval used is from", min(it_x), "to", max(it_x)))
+  print(
+    c(
+    paste("One of the solution to the equation is", it_x[i]),
+    paste("The tolerance to terminate the loop is", tolerance),
+    paste("The interval used is from", min(it_x), "to", max(it_x)))
+  )
+  
   knitr::kable(tbl_df(data.frame("x value" = it_x, error)))
 }
 
