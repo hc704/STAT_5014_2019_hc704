@@ -165,10 +165,6 @@ while (sum((theta_hat[,i] - theta_hat[,i-1]) > tolerance) >= 1) {
                      theta_hat[, i] - size / m * t(X) %*% (X %*% theta_hat[,i] - h))
   i <- i + 1
 }
-
-
-# theta_hat[, ncol(theta_hat)]
-# View(t(theta_hat))
 ```
 
 
